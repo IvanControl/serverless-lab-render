@@ -15,6 +15,7 @@ if DATABASE_URL:
         password=url.password,
         host=url.hostname,
         port=url.port
+	client_encoding='UTF8'
     )
 else:
     conn = None
