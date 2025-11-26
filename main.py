@@ -14,9 +14,12 @@ if DATABASE_URL:
         user=url.username,
         password=url.password,
         host=url.hostname,
-        port=url.port,
-	client_encoding='UTF8'
+        port=url.port
     )
+    # Принудительно устанавливаем кодировку
+    with conn.cursor() as cur:
+        cur.execute("SET client_encoding TO 'UTF8'")
+    conn.commit()
 else:
     conn = None
 
