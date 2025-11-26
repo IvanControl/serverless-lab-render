@@ -14,9 +14,10 @@ if DATABASE_URL:
         user=url.username,
         password=url.password,
         host=url.hostname,
-        port=url.port
+        port=url.port,
+        client_encoding='UTF8'  # Явно указываем кодировку
     )
-    # Принудительно устанавливаем кодировку
+    # Дополнительно устанавливаем кодировку
     with conn.cursor() as cur:
         cur.execute("SET client_encoding TO 'UTF8'")
     conn.commit()
@@ -64,6 +65,22 @@ def get_messages():
 @app.route('/')
 def hello():
     return "Hello, Serverless! 🚀\n", 200, {'Content-Type': 'text/plain'}
+
+@app.route('/echo')
+def echo_get():
+    text = request.args.get('text', '')
+    return text
+
+@app.route('/echo', methods=['POST'])
+def echo_post():
+    data = request.get_json()
+    if data:
+        return jsonify({
+            "status": "received",
+            "you_sent": data,
+            "length": len(str(data))
+        })
+    return jsonify({"error": "No JSON data received"}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
